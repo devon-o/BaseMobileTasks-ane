@@ -117,3 +117,8 @@ If planning to share images, be sure to include the Android permission to write 
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 ```
+
+Notes
+------
+
+- The .swc and .ane files included in the bin directory were compiled using AIR 16.0 sdk
