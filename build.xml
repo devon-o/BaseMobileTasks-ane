@@ -36,14 +36,14 @@
         
         <exec executable="${air.sdk.home}/bin/compc${bin.ext}" failonerror="true">
             <arg line='-source-path "${as3.src}"'/>
-            <arg line='-output "${bin.dir}/swc/${ane.name}.swc"'/>
+            <arg line='-output "${bin.dir}/swc/${ane.name}-${ane.version}.swc"'/>
             <arg line='-swf-version=27'/>
             <arg line='-external-library-path+="${air.sdk.home}/frameworks/libs/air/airglobal.swc"'/>
             <arg line='-include-classes ${classlist}'/>
             <env key="AIR_SDK_HOME" value="${air.sdk.home}"/>
         </exec>
         
-        <unzip src="${bin.dir}/swc/${ane.name}.swc" dest="temp" overwrite="true"/>
+        <unzip src="${bin.dir}/swc/${ane.name}-${ane.version}.swc" dest="temp" overwrite="true"/>
         <copy file="temp/library.swf" todir="${bin.dir}/android/swf" overwrite="true"/>
         <copy file="temp/library.swf" todir="${bin.dir}/default/swf" overwrite="true"/>
         
@@ -78,7 +78,7 @@
             <arg value='ane'/>
             <arg value='"${bin.dir}/ane/${ane.name}-${ane.version}.ane"'/>
             <arg value='"${bin.dir}/temp/extension.xml"'/>
-            <arg line='-swc "${bin.dir}/swc/${ane.name}.swc"'/>
+            <arg line='-swc "${bin.dir}/swc/${ane.name}-${ane.version}.swc"'/>
             <arg line='-platform Android-ARM -C "${bin.ane}/android/" .'/>
             <arg line='-platform Android-x86 -C "${bin.ane}/android/" .'/>    
             <arg line='-platform default -C "${bin.ane}/default/" .'/>
