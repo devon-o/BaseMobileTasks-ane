@@ -99,7 +99,7 @@ public class Context extends FREContext
 
     /**
      * Dispatch event back to ANE Actionscript
-     * @param type  type of Flash ShareMediaEvent (@see ShareMediaEvent)
+     * @param type  type of Flash BaseMobileTaskEvent (@see BaseMobileTaskEvent.as)
      */
     public void dispatchEvent(String type)
     {
