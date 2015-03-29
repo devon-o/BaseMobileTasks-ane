@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Native Android Build" basedir="." default="all">
+
+    <!-- Paths -->
+    <property name="src.java" location="src"/>
+    <property name="bin.classes" value="${bin.dir}/classes"/>
+    <property name="bin.jar" value="${bin.dir}/jar"/>
+
+    <!-- Class Path -->
+    <path id="class.path">
+        <pathelement location="${android.sdk.platform}/android.jar"/>
+        <pathelement location="${air.sdk.home}/lib/android/FlashRuntimeExtensions.jar"/>
+        <!-- Include additional required jar files in lib.root -->
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Clean -->
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+    </target>
+
+    <!-- All -->
+    <target name="all" depends="clean, package"/>
+
+    <!-- Compile java to class files -->
+    <target name="compile">
+        
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${bin.classes}"/>
+        <javac source="1.6" target="1.6" srcdir="${src.java}" destdir="${bin.classes}" includeantruntime="false">
+            <classpath refid="class.path"/>
+        </javac>
+
+    </target>
+
+    <!-- Package jar file -->
+    <target name="package" depends="compile">
+        
+        <mkdir dir="${bin.jar}"/>
+        <jar destfile="${bin.jar}/${ane.name}.jar">
+            <fileset dir="${bin.classes}"/>
+        </jar>
+
+    </target>
+
+</project>

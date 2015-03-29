@@ -1,0 +1,5 @@
+android.sdk.home=path/to/android-sdk
+android.sdk.platform=path/to/android-sdk/platforms/desired-platform
+air.sdk.home=path/to/air-sdk
+# eg .bat or .exe etc.
+bin.ext=

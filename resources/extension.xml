@@ -1,0 +1,24 @@
+<extension xmlns="http://ns.adobe.com/air/extension/16.0">
+    <id>@ANE_EXTENSION_ID@</id>
+    <versionNumber>@ANE_VERSION@</versionNumber>
+    <platforms>
+        <platform name="Android-ARM">
+            <applicationDeployment>			
+                <nativeLibrary>basemobiletasks.jar</nativeLibrary>
+                <initializer>com.onebyonedesign.mobile.tasks.Extension</initializer>
+                <finalizer>com.onebyonedesign.mobile.tasks.Extension</finalizer>
+            </applicationDeployment>		
+        </platform>
+        <platform name="Android-x86">
+            <applicationDeployment>			
+                <nativeLibrary>basemobiletasks.jar</nativeLibrary>
+                <initializer>com.onebyonedesign.mobile.tasks.Extension</initializer>
+                <finalizer>com.onebyonedesign.mobile.tasks.Extension</finalizer>
+            </applicationDeployment>	
+        </platform>
+        <platform name="default">
+            <applicationDeployment/> 
+        </platform> 
+    </platforms>
+</extension>
+

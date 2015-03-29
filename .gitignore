@@ -1,0 +1,11 @@
+# General
+bin-debug
+build.properties
+
+
+# IntelliJ
+.idea/
+gen/
+*.iml
+*.ipr
+*.iws
