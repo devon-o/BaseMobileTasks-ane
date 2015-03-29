@@ -6,10 +6,10 @@ This is an (*Android only* atm) [ane](http://www.adobe.com/devnet/air/native-ext
 Supported Tasks
 ------
 
--Get OS Version String
--Show Text Display (Android Toast)
--Set Full Screen (Android Immersive mode)
--Share Image (User selects an installed app (e.g. Facebook or Twitter) to share image with)
++Get OS Version String
++Show Text Display (Android Toast)
++Set Full Screen (Android Immersive mode)
++Share Image (User selects an installed app (e.g. Facebook or Twitter) to share image with)
 
 Build
 ------
