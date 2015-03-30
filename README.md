@@ -121,4 +121,4 @@ If planning to share images, be sure to include the Android permission to write 
 Notes
 ------
 
-- The .swc and .ane files included in the bin directory were compiled using AIR 16.0 sdk
+- The .swc and .ane files included in the bin directory were compiled using AIR 16.0 sdk and swf-version 27 (16.0)
