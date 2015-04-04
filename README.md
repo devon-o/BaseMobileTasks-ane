@@ -10,6 +10,7 @@ Supported Tasks
 - Show Text Display (Android Toast)
 - Set Full Screen (Android Immersive mode)
 - Share Image (User selects an installed app (e.g. Facebook or Twitter) to share image with)
+- Device Vibration
 
 Build
 ------
