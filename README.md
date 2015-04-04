@@ -99,6 +99,14 @@ private function onImageShareErr(e:BaseMobileTaskEvent):void
 }
 ```
 
+To vibrate device:
+
+```actionscript
+if (BaseMobileTasks.isSupported())
+	// If vibration is supported on device, device will vibrate for 250 milliseconds
+	BaseMobileTasks.instance.vibrate(250);
+```
+
 Installation
 ------
 
@@ -116,6 +124,12 @@ If planning to share images, be sure to include the Android permission to write 
 
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+```
+
+If planning to vibrate device, be sure to include the Android permission to do so:
+
+```xml
+<uses-permission android:name="android.permission.VIBRATE"/>
 ```
 
 Notes
