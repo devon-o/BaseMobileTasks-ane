@@ -67,7 +67,6 @@
         </copy>      
         <copy file="${resources.dir}/extension.xml" tofile="${bin.dir}/temp/extension.xml" overwrite="true">
             <filterset>
-                <filter token="ANE_EXTENSION_ID" value="${ane.extension.id}"/>
                 <filter token="ANE_VERSION" value="${ane.version}"/>
             </filterset>
         </copy>

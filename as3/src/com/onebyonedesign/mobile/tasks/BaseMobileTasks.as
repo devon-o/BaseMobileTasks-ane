@@ -112,6 +112,15 @@ public class BaseMobileTasks extends EventDispatcher
         _context.call("showText", text, duration);
     }
     
+    /**
+     * Vibrate device
+     * @param duration  duration of vibration in milliseconds
+     */
+    public function vibrate(duration:int):void
+    {
+        _context.call("vibrate", duration);
+    }
+    
 	//	Implementation
     
 	/** is android device */

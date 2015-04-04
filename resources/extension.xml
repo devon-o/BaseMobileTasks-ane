@@ -1,5 +1,5 @@
 <extension xmlns="http://ns.adobe.com/air/extension/16.0">
-    <id>@ANE_EXTENSION_ID@</id>
+    <id>com.onebyonedesign.basemobiletasks</id>
     <versionNumber>@ANE_VERSION@</versionNumber>
     <platforms>
         <platform name="Android-ARM">

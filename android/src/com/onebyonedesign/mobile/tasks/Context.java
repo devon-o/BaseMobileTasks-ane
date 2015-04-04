@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Toast;
 import com.adobe.fre.*;
@@ -13,7 +14,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class Context extends FREContext
 {
     /**
@@ -43,6 +43,7 @@ public class Context extends FREContext
         functionMap.put("setFullscreen", new SetFullScreenFunction());
         functionMap.put("getOSVersion", new GetOSVersionFunction());
         functionMap.put("showText", new ShowToastFunction());
+        functionMap.put("vibrate", new VibrateFunction());
 
         return functionMap;
     }
@@ -176,7 +177,7 @@ public class Context extends FREContext
         public FREObject call(FREContext freContext, FREObject[] freObjects)
         {
             Extension.debug("SetFullScreen()");
-
+            
             // utilizes 'immersive mode' only available on KitKat (4.4) and above
             // @see https://developer.android.com/training/system-ui/immersive.html
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
@@ -213,7 +214,6 @@ public class Context extends FREContext
                 decorView.setSystemUiVisibility(uiOptions);
                 
                 // return 'real' size of display in array
-                
                 Point p = new Point();
                 decorView.getDisplay().getRealSize(p);
                 
@@ -275,6 +275,30 @@ public class Context extends FREContext
                 Extension.warn("Cannot make toast", e);
             }
 
+            return null;
+        }
+    }
+
+    /** Vibrate device function */
+    class VibrateFunction implements FREFunction
+    {
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+        @Override
+        public FREObject call(FREContext freContext, FREObject[] freObjects)
+        {
+            try
+            {
+                long duration = (long)freObjects[0].getAsInt();
+                Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(android.content.Context.VIBRATOR_SERVICE);
+                if(!vibe.hasVibrator())
+                    return null;
+
+                vibe.vibrate(duration);
+            }
+            catch (Exception e)
+            {
+                Extension.warn("Could not vibrate device", e);
+            }
             return null;
         }
     }
