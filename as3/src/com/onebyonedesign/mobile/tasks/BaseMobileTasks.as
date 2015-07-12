@@ -121,6 +121,34 @@ public class BaseMobileTasks extends EventDispatcher
         _context.call("vibrate", duration);
     }
     
+    /**
+     * Displays a Native Dialog with a single button labeled 'OK'. No event is dispatched.
+     * Note: Android style guide recommends against displaying a title.
+     * "They are appropriate only for high-risk situations, such as potential loss of data or connectivity, or extra charges"
+     * 
+     * @param message   Message of Dialog
+     * @param title     Title of Dialog
+     */
+    public function displayAlertDialog(message:String, title:String=""):void
+    {
+        _context.call("displayAlert", message, title);
+    }
+    
+    /**
+     * Displays a Native Dialog with two buttons - a positive and a negative.
+     * User interaction will dispatch either BaseMobileTaskEvent.CONFIRMATION_POSITIVE or BaseMobileTaskEvent.CONFIRMATION_POSITIVE event.
+     * Note: Android style guide recommends against displaying a title.
+     * "They are appropriate only for high-risk situations, such as potential loss of data or connectivity, or extra charges"
+     * 
+     * @param message       Message of Dialog
+     * @param title         Title of Dialog
+     * @param positiveLabel Label appearing on positive action button
+     * @param negativeLabel Label appearing on negative action button
+     */
+    public function displayConfirmationDialog(message:String, title:String="", positiveLabel:String="OK", negativeLabel:String="Cancel"):void
+    {
+        _context.call("displayConfirmation", message, title, positiveLabel, negativeLabel);
+    }
 	//	Implementation
     
 	/** is android device */

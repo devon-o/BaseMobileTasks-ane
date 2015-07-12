@@ -1,6 +1,8 @@
 package com.onebyonedesign.mobile.tasks;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -44,6 +46,8 @@ public class Context extends FREContext
         functionMap.put("getOSVersion", new GetOSVersionFunction());
         functionMap.put("showText", new ShowToastFunction());
         functionMap.put("vibrate", new VibrateFunction());
+        functionMap.put("displayAlert", new DisplayAlertFunction());
+        functionMap.put("displayConfirmation", new DisplayConfirmationFunction());
 
         return functionMap;
     }
@@ -129,6 +133,28 @@ public class Context extends FREContext
 
         Extension.debug(String.format("Context.dispatchEventWithReason(%s, %s)", type, reason));
         dispatchStatusEventAsync(type, reason);
+    }
+
+    // Helpers
+
+    /**
+     * Create Dialog Builder
+     * @return AlertDialog.Builder instance
+     */
+    public AlertDialog.Builder createDialogBuilder()
+    {
+        AlertDialog.Builder builder;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+
+        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
+
+        else
+            builder = new AlertDialog.Builder(getActivity());
+
+        return builder;
     }
 
     // Nested Function Classes
@@ -298,6 +324,86 @@ public class Context extends FREContext
             catch (Exception e)
             {
                 Extension.warn("Could not vibrate device", e);
+            }
+            return null;
+        }
+    }
+
+    /** Display Alert Function (Dialog with single 'OK' button) */
+    class DisplayAlertFunction implements FREFunction
+    {
+        @Override
+        public FREObject call(FREContext freContext, FREObject[] freObjects)
+        {
+            try
+            {
+                String msg = freObjects[0].getAsString();
+                String title = freObjects[1].getAsString();
+
+                AlertDialog.Builder builder = createDialogBuilder();
+                if (title.length()>0)
+                    builder.setTitle(title);
+                builder.setMessage(msg);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Do nothing but acknowledge and dismiss
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+            }
+            catch (Exception e)
+            {
+                Extension.warn("Could not display Alert Dialog", e);
+                dispatchEvent("confirmationError");
+            }
+            return null;
+        }
+    }
+
+    /** Display Confirmation Function (dialog with 2 buttons - positive and negative) */
+    class DisplayConfirmationFunction implements  FREFunction
+    {
+        @Override
+        public FREObject call(FREContext freContext, FREObject[] freObjects)
+        {
+            try
+            {
+                String msg = freObjects[0].getAsString();
+                String title = freObjects[1].getAsString();
+                String pLabel = freObjects[2].getAsString();
+                String nLabel = freObjects[3].getAsString();
+
+                AlertDialog.Builder builder = createDialogBuilder();
+                if (title.length()>0)
+                    builder.setTitle(title);
+                builder.setMessage(msg);
+                builder.setPositiveButton(pLabel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        dispatchEvent("confirmationPositive");
+                    }
+                });
+                builder.setNegativeButton(nLabel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        dispatchEvent("confirmationNegative");
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+            }
+            catch (Exception e)
+            {
+                Extension.warn("Could not display Confirmation Dialog", e);
+                dispatchEvent("confirmationError");
             }
             return null;
         }

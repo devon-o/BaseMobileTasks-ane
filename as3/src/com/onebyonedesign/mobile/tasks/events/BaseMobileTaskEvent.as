@@ -13,6 +13,15 @@ public class BaseMobileTaskEvent extends Event
     /** Dispatched once UI Dialog to share image is shown */
     public static const IMAGE_SHARED:String = "imageShared";
     
+    /** Dispatched when user hits 'positive' button on confirmation dialog */
+    public static const CONFIRMATION_POSITIVE:String = "confirmationPositive";
+    
+    /** Dispatched when user hits 'negative' button on confirmation dialog */
+    public static const CONFIRMATION_NEGATIVE:String = "confirmationNegative";
+    
+    /** Dispatched when a confirmation dialog cannot be shown */
+    public static const CONFIRMATION_ERROR:String = "confirmationError";
+    
     // Instance vars
 
 	/** Reason for error or additional data */
