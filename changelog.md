@@ -10,3 +10,7 @@ All notable changes to BaseMobileTasks-ane will be documented in this file.
 
 #### Changed
 - Removed extension id from ane.properties
+
+### 1.1.0
+#### Added
+- Native dialog methods (alert and confirmation)
