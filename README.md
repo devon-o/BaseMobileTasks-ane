@@ -11,6 +11,7 @@ Supported Tasks
 - Set Full Screen (Android Immersive mode)
 - Share Image (User selects an installed app (e.g. Facebook or Twitter) to share image with)
 - Device Vibration
+- Native Dialogs (Alert and Confirmation)
 
 Build
 ------
@@ -38,7 +39,7 @@ if (BaseMobileTasks.isSupported())
 	BaseMobileTasks.instance.showTextDisplay("Hello World", BaseMobileTasks.TEXT_DISPLAY_LONG);
 ```
 
-To go into full screen (*note:* requires Android 4.4 or higher):
+To go into full screen (*note:* requires Android 4.4 or higher. If full screen is your only requirement, try the [air-fullscreen-ane](https://github.com/mesmotronic/air-fullscreen-ane) for more features and options):
 
 ```actionscript
 if (BaseMobileTasks.isSupported())
@@ -106,6 +107,54 @@ To vibrate device:
 if (BaseMobileTasks.isSupported())
 	// If vibration is supported on device, device will vibrate for 250 milliseconds
 	BaseMobileTasks.instance.vibrate(250);
+```
+
+To display alert dialog (this will show a native dialog with a single button labeled 'OK'. No events will be dispatched):
+
+```actionscript
+private function showAlert():void
+{
+    if (!BaseMobileTasks.isSupported())
+        return;
+        
+    var message:String = "Hello World";
+    BaseMobileTasks.instance.displayAlertDialog(message);
+}
+```
+To display confirmation dialog (this will show a native dialog with two buttons - one to cancel and one to accept. User interaction will trigger an event - either BaseMobileTaskEvent.CONFIRMATION_POSITIVE or BaseMobileTaskEvent.CONFIRMATION_NEGATIVE):
+
+```actionscript
+private function showConfirmation():void
+{
+    if (!BaseMobileTasks.isSupported())
+        return;
+        
+    var title:String = "Delete file?";
+    var message:String = "This will permanently delete the selected file";
+    var acceptLabel:String = "Delete";
+    var rejectLabel:String = "Cancel";
+    
+    BaseMobileTasks.instance.addEventListener(BaseMobileTaskEvent.CONFIRMATION_POSITIVE, onAccepted);
+    BaseMobileTasks.instance.addEventListener(BaseMobileTaskEvent.CONFIRMATION_NEGATIVE, onRejected);
+    
+    BaseMobileTasks.instance.displayConfirmationDialog(message, title, acceptLabel, rejectLabel);
+}
+
+private function onAccepted(e:BaseMobileTaskEvent):void
+{
+    BaseMobileTasks.instance.removeEventListener(BaseMobileTaskEvent.CONFIRMATION_POSITIVE, onAccepted);
+    BaseMobileTasks.instance.removeEventListener(BaseMobileTaskEvent.CONFIRMATION_NEGATIVE, onRejected);
+    
+    // User has accepted dialog - delete the file
+}
+
+private function onRejected(e:BaseMobileTaskEvent):void
+{
+    BaseMobileTasks.instance.removeEventListener(BaseMobileTaskEvent.CONFIRMATION_POSITIVE, onAccepted);
+    BaseMobileTasks.instance.removeEventListener(BaseMobileTaskEvent.CONFIRMATION_NEGATIVE, onRejected);
+    
+    // User has canceled the delete - act accordingly
+}
 ```
 
 Installation

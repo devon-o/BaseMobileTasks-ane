@@ -11,6 +11,7 @@ All notable changes to BaseMobileTasks-ane will be documented in this file.
 #### Changed
 - Removed extension id from ane.properties
 
+<<<<<<< HEAD
 ### 1.2.0
 #### Added
 - Internet connection check
@@ -19,3 +20,8 @@ All notable changes to BaseMobileTasks-ane will be documented in this file.
 - Renamed Context.java to MobileTasksContext.java
 - Now catching Throwables
 - General clean up
+=======
+### 1.1.0
+#### Added
+- Native dialog methods (alert and confirmation)
+>>>>>>> origin/master
