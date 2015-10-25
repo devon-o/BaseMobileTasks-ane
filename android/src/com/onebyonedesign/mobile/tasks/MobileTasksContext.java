@@ -2,10 +2,14 @@ package com.onebyonedesign.mobile.tasks;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Vibrator;
 import android.view.View;
@@ -13,15 +17,18 @@ import android.widget.Toast;
 import com.adobe.fre.*;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Context extends FREContext
+@TargetApi(Build.VERSION_CODES.KITKAT)
+public class MobileTasksContext extends FREContext
 {
     /**
-     * Create a new Context
+     * Create a new MobileTasksContext
      */
-    public Context()
+    public MobileTasksContext()
     {
         Extension.debug("Context()");
     }
@@ -48,6 +55,7 @@ public class Context extends FREContext
         functionMap.put("vibrate", new VibrateFunction());
         functionMap.put("displayAlert", new DisplayAlertFunction());
         functionMap.put("displayConfirmation", new DisplayConfirmationFunction());
+        functionMap.put("testConnection", new IsConnectedFunction());
 
         return functionMap;
     }
@@ -165,31 +173,19 @@ public class Context extends FREContext
         @Override
         public FREObject call(FREContext freContext, FREObject[] freObjects)
         {
-            Extension.debug("ShareImageFunction.call()");
-
-            String imagePath = "";
-            String chooserTitle = "";
-
             try
             {
-                imagePath = freObjects[0].getAsString();
-            }
-            catch (Exception e)
-            {
-                Extension.warn("No image path sent", e);
-            }
+                String imagePath = freObjects[0].getAsString();
+                String chooserTitle = freObjects[1].getAsString();
 
-            try
-            {
-                chooserTitle = freObjects[1].getAsString();
+                // do actual share
+                shareImage(imagePath, chooserTitle);
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("No chooser title sent", e);
+                Extension.warn("Could not set imagePath or chooserTitle", t);
+                dispatchEvent("shareImageError");
             }
-
-            // do actual share
-            shareImage(imagePath, chooserTitle);
 
             return null;
         }
@@ -198,7 +194,6 @@ public class Context extends FREContext
     /** Set Full Screen Function */
     class SetFullScreenFunction implements FREFunction
     {
-        @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         public FREObject call(FREContext freContext, FREObject[] freObjects)
         {
@@ -248,9 +243,9 @@ public class Context extends FREContext
                 ret.setObjectAt(1, FREObject.newObject(p.y));
                 return ret;
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("Could not set full screen", e);
+                Extension.warn("Could not set full screen", t);
             }
             
             return null;
@@ -268,11 +263,11 @@ public class Context extends FREContext
             {
                 return FREObject.newObject(Build.VERSION.RELEASE);
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("Could not return OS version", e);
-                return null;
+                Extension.warn("Could not return OS version", t);
             }
+            return null;
         }
     }
 
@@ -282,7 +277,6 @@ public class Context extends FREContext
         @Override
         public FREObject call(FREContext freContext, FREObject[] freObjects)
         {
-            Extension.debug("ShowToastFunction()");
             try
             {
                 String text = freObjects[0].getAsString();
@@ -296,9 +290,9 @@ public class Context extends FREContext
                 Toast toast = Toast.makeText(getActivity().getApplicationContext(), text, duration);
                 toast.show();
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("Cannot make toast", e);
+                Extension.warn("Cannot make toast", t);
             }
 
             return null;
@@ -315,15 +309,18 @@ public class Context extends FREContext
             try
             {
                 long duration = (long)freObjects[0].getAsInt();
-                Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(android.content.Context.VIBRATOR_SERVICE);
+                Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                 if(!vibe.hasVibrator())
+                {
+                    Extension.debug("Device has no vibrator");
                     return null;
+                }
 
                 vibe.vibrate(duration);
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("Could not vibrate device", e);
+                Extension.warn("Could not vibrate device", t);
             }
             return null;
         }
@@ -356,9 +353,9 @@ public class Context extends FREContext
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("Could not display Alert Dialog", e);
+                Extension.warn("Could not display Alert Dialog", t);
                 dispatchEvent("confirmationError");
             }
             return null;
@@ -400,12 +397,79 @@ public class Context extends FREContext
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
-                Extension.warn("Could not display Confirmation Dialog", e);
+                Extension.warn("Could not display Confirmation Dialog", t);
                 dispatchEvent("confirmationError");
             }
             return null;
+        }
+    }
+
+    /** Check that internet connection is both available and connected */
+    class IsConnectedFunction implements FREFunction
+    {
+        @Override
+        public FREObject call(FREContext freContext, FREObject[] freObjects)
+        {
+            // Test connection is available
+            try
+            {
+                ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+                if (info == null || !info.isConnectedOrConnecting())
+                {
+                    dispatchEvent("internetConnectionError");
+                    return null;
+                }
+
+                // Test connection is working
+                new ConnectionCheck().execute();
+            }
+            catch (Throwable t)
+            {
+                Extension.warn("Could not test for Internet Connection", t);
+                dispatchEvent("internetConnectionError");
+            }
+
+            return null;
+        }
+    }
+
+    /** AsyncTask to check that internet is connected */
+    class ConnectionCheck extends AsyncTask<Void, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+            // http://stackoverflow.com/questions/6493517/detect-if-android-device-has-internet-connection
+
+            try
+            {
+                HttpURLConnection url = (HttpURLConnection) (new URL("http://clients3.google.com/generate_204").openConnection());
+                url.setRequestProperty("User-Agent", "Android");
+                url.setRequestProperty("Connection", "close");
+                url.setConnectTimeout(1500);
+                url.connect();
+                return (url.getResponseCode()==204 && url.getContentLength()==0);
+            }
+            catch (Throwable t)
+            {
+                Extension.warn("Could not reach URL", t);
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success)
+        {
+            if (!success)
+            {
+                dispatchEvent("internetConnectionError");
+                return;
+            }
+            dispatchEvent("internetConnectionSuccess");
         }
     }
 }

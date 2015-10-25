@@ -16,7 +16,7 @@ public class Extension implements FREExtension
     public FREContext createContext(String extID)
     {
         Extension.debug("Extension.createContext()");
-        return Extension.context = new Context();
+        return Extension.context = new MobileTasksContext();
     }
 
     /** Dispose */

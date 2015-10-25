@@ -149,6 +149,19 @@ public class BaseMobileTasks extends EventDispatcher
     {
         _context.call("displayConfirmation", message, title, positiveLabel, negativeLabel);
     }
+    
+    /**
+     * Will test Internet availability (Checks that connection is available *and* connection is established)
+     * Will provoke extension to dispatch either:
+     * BaseMobileTaskEvent.INTERNET_CONNECTION_SUCCESS 
+     * or
+     * BaseMobileTaskEvent.INTERNET_CONNECTION_ERROR
+     */
+    public function testConnection():void
+    {
+        _context.call("testConnection");
+    }
+    
 	//	Implementation
     
 	/** is android device */
@@ -162,6 +175,7 @@ public class BaseMobileTasks extends EventDispatcher
 	{
 		return Capabilities.manufacturer.indexOf("iOS") > -1;
 	}
+    
     
 	// Events
     

@@ -22,6 +22,12 @@ public class BaseMobileTaskEvent extends Event
     /** Dispatched when a confirmation dialog cannot be shown */
     public static const CONFIRMATION_ERROR:String = "confirmationError";
     
+    /** Dispatched if (actual) Internet connection is available */
+    public static const INTERNET_CONNECTION_SUCCESS:String = "internetConnectionSuccess";
+    
+    /** Dispatched if Internet connection is unavailable (even if WiFi is available) */
+    public static const INTERNET_CONNECTION_ERROR:String = "internetConnectionError";
+    
     // Instance vars
 
 	/** Reason for error or additional data */
